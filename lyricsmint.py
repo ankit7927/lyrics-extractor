@@ -1,16 +1,17 @@
 from bs4 import BeautifulSoup
-import requests, sqlite3, sys
+import requests
 
-file_name = "page_links.txt"
-db_path = "E:/company/lyricslibrary/db.sqlite3"
-connection = sqlite3.connect(db_path)
+def formate_lyric(data):
+    splitter = "---"
+    llist = []
+    for x in data.find_all("p"):
+        z = BeautifulSoup(str(x).replace("\n<br/>", "--"), "html.parser")
+        llist.append(z.text)
+    
+    return splitter.join(llist)
+    
 
-# for i in connection.execute("SELECT name FROM sqlite_master").fetchall():
-#     print(i)
-
-# sys.exit()
-
-def extractor(page_url):
+def extractor(page_url) ->dict:
     print(f"extracting : {page_url}", end="\n")
 
     page = requests.get(page_url)
@@ -23,7 +24,9 @@ def extractor(page_url):
 
     song_data["publish"] = soup.find("time", "published")['datetime']
 
-    song_data["lyrics"] = soup.find("div", "text-base lg:text-lg pb-2 text-center md:text-left").text.replace("\n", "\n")
+    x = soup.find("div", "text-base lg:text-lg pb-2 text-center md:text-left")
+
+    song_data["lyrics"] = formate_lyric(x)
 
     info_soup = soup.find_all("td", "w-3/4 px-5 font-bold border-b border-grey-light", limit=4)
 
@@ -39,18 +42,6 @@ def extractor(page_url):
 
     song_data["slug"] = song_data["name"].replace(" ", "-").lower()
 
-    song_data["title"] = song_data["name"] + "-" + song_data["album"] + " | " + song_data["singer"]
+    song_data["title"] = song_data["name"] + " - " + song_data["album"] + " | " + song_data["singer"]
 
-    connection.execute("insert into api_songlyric values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (None, song_data["name"], song_data["album"], song_data["singer"], song_data["writer"], song_data["music"], song_data["slug"], song_data["title"], song_data["image"], song_data["publish"], song_data["lyrics"], ))
-    connection.commit()
-
-    print(f"inserted : {song_data["name"]}", end="\n")
-
-file = open(file_name, "r")
-for page_url in file.readlines():
-    try:
-        extractor(page_url=page_url)
-    except Exception as e:
-        print(e)
-
-file.close()
+    return song_data
