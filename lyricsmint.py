@@ -20,13 +20,11 @@ def extractor(request, page_url) ->dict:
 
     info_soup = soup.find_all("td", "w-3/4 px-5 font-bold border-b border-grey-light", limit=4)
 
-    singer_data = info_soup[0].get_text(separator="", strip=True)
-
-    song_data["singers"] = singer_data.split(",")
+    song_data["singer"] = info_soup[0].get_text(separator="", strip=True).split(",")
 
     song_data["album"] = info_soup[1].get_text(separator="", strip=True)
 
-    song_data["writers"] = info_soup[2].get_text(separator="", strip=True).split(",")
+    song_data["writer"] = info_soup[2].get_text(separator="", strip=True).split(",")
 
     song_data["music"] = info_soup[3].get_text(separator="", strip=True)
 
@@ -38,6 +36,8 @@ def extractor(request, page_url) ->dict:
     else:
         song_data["ytvid"] = ""
         song_data["thumbnail"] = ""
+
+    song_data["slug"] = song_data["name"].lower().replace(" ", "-")+"-"+song_data["album"].lower().replace(" ", "-")
 
     return song_data
 

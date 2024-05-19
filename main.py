@@ -1,8 +1,8 @@
 from lyricsmint import extractor
-import requests, time, sys
+import requests, sys, json
 
 if __name__=="__main__":
-    upload_url = input("Enter upload url : ")
+    upload_url = "http://localhost:8000/api/song/create"# input("Enter upload url : ")
     if upload_url == "":
         print("exiting upload url is none")
         sys.exit()
@@ -12,8 +12,6 @@ if __name__=="__main__":
         for linke in file.read().splitlines():
             song_detail = extractor(request, linke)
 
-            time.sleep(2)
-
-            request.post(url=upload_url, data=song_detail)
+            request.post(url=upload_url, json=song_detail)
 
     request.close()
