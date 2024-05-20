@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
-
+import re
 
 def extractor(request, page_url) ->dict:
-    print(f"extracting : {page_url}", end="\n")
+    print(f"extracting : {page_url}")
 
     page = request.get(page_url)
 
@@ -16,7 +16,7 @@ def extractor(request, page_url) ->dict:
 
     x = soup.find("div", "text-base lg:text-lg pb-2 text-center md:text-left")
 
-    song_data["lyrics"] = x.get_text(separator="\n", strip=True)
+    song_data["lyrics"] = str(x)
 
     info_soup = soup.find_all("td", "w-3/4 px-5 font-bold border-b border-grey-light", limit=4)
 
@@ -28,16 +28,20 @@ def extractor(request, page_url) ->dict:
 
     song_data["music"] = info_soup[3].get_text(separator="", strip=True)
 
-    thumb_link = soup.find("img", "absolute w-full h-full border shadow-lg outline-none pin").attrs["src"]
+    thumb_link = soup.find("img", "absolute w-full h-full border shadow-lg outline-none pin")
 
     if thumb_link is not None :
-        song_data["ytvid"] = thumb_link[27:38]
-        song_data["thumbnail"] = thumb_link.replace("mq","maxres")
+        song_data["ytvid"] = thumb_link.attrs["src"][27:38]
+        song_data["thumbnail"] = thumb_link.attrs["src"].replace("mq","maxres")
     else:
         song_data["ytvid"] = ""
         song_data["thumbnail"] = ""
 
-    song_data["slug"] = song_data["name"].lower().replace(" ", "-")+"-"+song_data["album"].lower().replace(" ", "-")
+    slug = song_data["name"].lower()+ " " + song_data["album"].lower()
+
+    song_data["slug"] = re.sub(r'\W+','-', slug)
+
+    print("song data collected ", song_data["slug"])
 
     return song_data
 

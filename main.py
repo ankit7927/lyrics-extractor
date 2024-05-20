@@ -10,8 +10,11 @@ if __name__=="__main__":
     request = requests.Session()
     with open("page_links.txt", "r") as file:
         for linke in file.read().splitlines():
-            song_detail = extractor(request, linke)
-
-            request.post(url=upload_url, json=song_detail)
+            try:
+                song_detail = extractor(request, linke)
+                request.post(url=upload_url, json=song_detail)
+                print("uploaded --")
+            except Exception as e:
+                print(e)
 
     request.close()
