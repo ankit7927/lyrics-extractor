@@ -13,7 +13,7 @@ if __name__=="__main__":
             try:
                 song_detail = extractor(request, linke)
                 request.post(url=upload_url, json=song_detail)
-                print("uploaded --")
+                print("uploaded --", "\n")
             except Exception as e:
                 print(e)
 
