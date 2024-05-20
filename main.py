@@ -12,8 +12,8 @@ if __name__=="__main__":
         for linke in file.read().splitlines():
             try:
                 song_detail = extractor(request, linke)
-                request.post(url=upload_url, json=song_detail)
-                print("uploaded --", "\n")
+                response = request.post(url=upload_url, json=song_detail)
+                print("uploaded -- " + str(response.status_code), "\n")
             except Exception as e:
                 print(e)
 
