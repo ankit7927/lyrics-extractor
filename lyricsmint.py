@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-import re
 
 def extractor(request, page_url) ->dict:
     print(f"extracting : {page_url}")
@@ -9,6 +8,8 @@ def extractor(request, page_url) ->dict:
     soup = BeautifulSoup(page.text, "html.parser")
 
     song_data = {}
+
+    song_data["slug"] = page_url.split('/').pop()
 
     song_data["name"] = soup.find("span", "current").text
 
@@ -36,10 +37,6 @@ def extractor(request, page_url) ->dict:
     else:
         song_data["ytvid"] = ""
         song_data["thumbnail"] = ""
-
-    slug = song_data["name"].lower()+ " " + song_data["album"].lower()
-
-    song_data["slug"] = re.sub(r'\W+','-', slug)
 
     print("song data collected ", song_data["slug"])
 
