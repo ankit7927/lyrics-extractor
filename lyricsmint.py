@@ -1,7 +1,9 @@
 from bs4 import BeautifulSoup
+from logger import logger
+
 
 def extractor(request, page_url) ->dict:
-    print(f"extracting : {page_url}")
+    logger.info("extracting data", page_url)
 
     page = request.get(page_url)
 
@@ -21,11 +23,9 @@ def extractor(request, page_url) ->dict:
 
     info_soup = soup.find_all("td", "w-3/4 px-5 font-bold border-b border-grey-light", limit=4)
 
-    song_data["singer"] = info_soup[0].get_text(separator="", strip=True).split(",")
-
     song_data["album"] = info_soup[1].get_text(separator="", strip=True)
 
-    song_data["writer"] = info_soup[2].get_text(separator="", strip=True).split(",")
+    song_data["artist"] = info_soup[0].get_text(separator="", strip=True).split(",") + info_soup[2].get_text(separator="", strip=True).split(",")
 
     song_data["music"] = info_soup[3].get_text(separator="", strip=True)
 
@@ -38,7 +38,7 @@ def extractor(request, page_url) ->dict:
         song_data["ytvid"] = ""
         song_data["thumbnail"] = ""
 
-    print("song data collected ", song_data["slug"])
+    logger.info("song data collected",  song_data["slug"])
 
     return song_data
 
