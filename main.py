@@ -2,7 +2,7 @@ from lyricsmint import extractor
 import requests, sys, threading, time, logging
 from logger import logger
 
-upload_url = "http://localhost:8000/api/song/create"# input("Enter upload url : ")
+upload_url = "https://rockerlyrics.pythonanywhere.com/api/song/create"# input("Enter upload url : ")
 if upload_url == "":
     print("exiting upload url is none")
     sys.exit()
@@ -20,9 +20,7 @@ def extract():
             continue
         song_detail = extractor(request, link)
         res = request.post(url=upload_url, json=song_detail)
-        if res.status_code == 200:
-            logger.info("data sent", res.status_code)
-        else: logger.info("failed to send data", res.status_code)
+        print(f"response from server {res.status_code}")
         time.sleep(1)
 
 if __name__ == "__main__":

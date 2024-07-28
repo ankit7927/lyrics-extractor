@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from logger import logger
-
+from datetime import datetime
 
 def extractor(request, page_url) ->dict:
     logger.info("extracting data", page_url)
@@ -15,7 +15,7 @@ def extractor(request, page_url) ->dict:
 
     song_data["name"] = soup.find("span", "current").text
 
-    song_data["publish"] = soup.find("time", "published")['datetime']
+    song_data["publish"] = str(datetime.fromisoformat(soup.find("time", "published")['datetime']))
 
     x = soup.find("div", "text-base lg:text-lg pb-2 text-center md:text-left")
 
